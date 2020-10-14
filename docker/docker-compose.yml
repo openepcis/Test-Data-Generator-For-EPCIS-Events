@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+  epcis-test-data-generator:
+    build:
+      context: ./../
+      dockerfile: ./docker/Dockerfile
+    image: gs1/epcis-test-data-generator:lastest
+    ports:
+    - "3000:3000"

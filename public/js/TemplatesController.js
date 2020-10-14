@@ -183,7 +183,7 @@ syncApp.controller('diagramCtrl', function ($scope,$http,$rootScope,$copyToClipb
 		
 		//Sort the events based on the name
 		//AllEventFinalArray.sort((a, b) => (a.NodeName > b.NodeName) ? 1 : -1);		
-		console.log(AllEventFinalArray);
+		//console.log(AllEventFinalArray);
 		
 		//Check if the Child count matches the parent Count
 		for(var parentCount=0; parentCount<AllEventFinalArray.length; parentCount++)

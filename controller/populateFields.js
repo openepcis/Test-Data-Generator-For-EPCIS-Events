@@ -442,7 +442,7 @@ exports.BusinessStep = function(callback){
 									{value:'00:00',										text:'Universal Coordinated Time (GMT+00:00)'},
 									{value:'+01:00',									text:'European Central Time (GMT+01:00)'},
 									{value:'+02:00',									text:'Eastern European Time (GMT+02:00)'},
-									{value:'+02:00',									text:'(Arabic) Egypt Standard Time (GMT+02:00)'},
+									//{value:'+02:00',									text:'(Arabic) Egypt Standard Time (GMT+02:00)'},
 									{value:'+03:00',									text:'Eastern African Time (GMT+03:00)'},
 									{value:'+03:30',									text:'Middle East Time (GMT+03:30)'},
 									{value:'+04:00',									text:'Near East Time (GMT+04:00)'},

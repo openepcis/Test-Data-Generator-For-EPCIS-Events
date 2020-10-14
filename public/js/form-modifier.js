@@ -18,6 +18,43 @@ app.controller('AppController2', function($scope,$http,$location,$anchorScroll,$
            $scope.CommonFormQuantity.ObjectEventQuantityQuantityUOM = UOMText;  
            $scope.hidethis = true;  
       } */
+	
+	
+	//Set the default values for some of the fields
+	
+	//Set the date fields with current values
+	$scope.formdata.EventTimeSelector			=	"SpecificTime";
+	$scope.formdata.RecordTimeOption			=	"no";
+	$scope.formdata.eventtimeSpecific			=	new Date();
+	$scope.formdata.EventTimeFrom				=	new Date();
+	$scope.formdata.ErrorDeclarationTime		=	new Date();
+	$scope.formdata.ErrorDeclarationTimeFrom	=	new Date();
+	var h 										= 	$scope.formdata.eventtimeSpecific.getHours();
+	var m 										= 	$scope.formdata.eventtimeSpecific.getMinutes();
+	
+	$scope.formdata.eventtimeSpecific.setHours(h,m,0,0);
+	$scope.formdata.EventTimeFrom.setHours(h,m,0,0);
+	$scope.formdata.ErrorDeclarationTime.setHours(h,m,0,0);
+	$scope.formdata.ErrorDeclarationTimeFrom.setHours(h,m,0,0);
+	
+	var tomorrow								=	new Date();
+	tomorrow.setDate(new Date().getDate()+1);
+
+	$scope.formdata.EventTimeTo					=	tomorrow;
+	$scope.formdata.ErrorDeclarationTimeTo		=	tomorrow;
+	$scope.formdata.EventTimeTo.setHours(h,m,0,0);
+	$scope.formdata.ErrorDeclarationTimeTo.setHours(h,m,0,0);
+	
+	//Set the default values for timezone field
+	$scope.formdata.EventTimeZone				=	"+02:00";
+	$scope.formdata.ErrorTimeZone				=	"+02:00";
+	
+	//Set default value for action field
+	$scope.formdata.action						=	"ADD";
+	
+	//Set initial default value for EventCount as 1
+	$scope.formdata.eventcount					=	1;
+	
 	  
 	//Reset all the fields onclick of Reset Button
 	$scope.ReloadTable	=	function(){

@@ -86,7 +86,7 @@
 									<td rowspan="{{ EventTypeRowSpan }}" style="background-color: #F2F3F4;"></td>
 									<td> Event Count </td>
 									<td>
-										<input type="number" min="1" max="1000" class="form-control" ng-model="formdata.eventcount" oninput="this.value=this.value.replace(/[^0-9]/g,'');setCustomValidity('');"  oninvalid="this.setCustomValidity('Number of Events must be between 1 and 1000')" placeholder="Number of events required" required ></input>
+										<input id="eventcount" type="number" min="1" max="1000" class="form-control" ng-model="formdata.eventcount" oninput="this.value=this.value.replace(/[^0-9]/g,'');setCustomValidity('');"  oninvalid="this.setCustomValidity('Number of Events must be between 1 and 1000')" placeholder="Number of events required" required ></input>
 									</td>
 								</tr>
 								<tr>
@@ -141,7 +141,7 @@
 								
 								<!-- WHAT dimension STARTs-->
 								<tr>
-									<td rowspan="{{ rowspanWHAT }}" style="background-color: #607fbf;text-align: center;"> WHAT </td>
+									<td rowspan="{{ rowspanWHAT }}" style="background-color: #607fbf;text-align: center;"> <b>WHAT</b> </td>
 									<!--When No EVENT TYPE has been selected-->
 									<td style="background-color: #dfe5f1;" ng-show="formdata.eventtype1 == '' "></td>
 									<td ng-show="formdata.eventtype1 == '' "> Please Select the Event type </td>
@@ -327,11 +327,11 @@
 								
 								<!-- WHEN DIMENSION FIELFDS -->
 								<tr>
-									<td rowspan="2" style="background-color: #a854a8;text-align: center;"> WHEN </td>
+									<td rowspan="2" style="background-color: #a854a8;text-align: center;"> <b>WHEN</b> </td>
 									<td style="background-color: #eedded;"  class="column2"> Event Time </td>
 									
 									<td>
-										<select ng-model="formdata.EventTimeSelector" class="form-control" required>
+										<select id="EventTimeSelector" ng-model="formdata.EventTimeSelector" class="form-control" required>
 											<option class="dropdown-item" value="" selected> Choose </option>
 											<option class="dropdown-item" value="SpecificTime"> Specific Time </option>
 											<option class="dropdown-item" value="TimeRange"> Time Range </option>
@@ -386,7 +386,7 @@
 
 								<!-- WHERE DIMENSION START -->
 								<tr>
-									<td rowspan="2" style="background-color: #478f77;text-align: center;"> WHERE </td>
+									<td rowspan="2" style="background-color: #478f77;text-align: center;"> <b>WHERE</b> </td>
 									<td style="background-color: #dae9e4;" class="column2"> Read Point </td>
 									<td>
 										<select ng-model="formdata.readpointselector" id="readpointselector" class="form-control">
@@ -452,7 +452,7 @@
 
 								<!--WHY DIMESION START -->
 								<tr>
-									<td rowspan="{{ rowspanWHY }}" style="background-color: #F7DC6F;text-align: center;"> WHY </td>
+									<td rowspan="{{ rowspanWHY }}" style="background-color: #F7DC6F;text-align: center;"> <b>WHY</b> </td>
 									<td style="background-color: #faf4d5;" class="column2"> Business Step </td>
 									<td>
 										<select ng-model="formdata.businessStep" id="businessStep"  ng-options='businessStep.value as businessStep.text for businessStep in businessSteps' class="form-control">
@@ -597,7 +597,7 @@
 								
 								<!-- HOW DIMENSION -->
 								<tr>
-									<td rowspan="{{ 1 }}" style="background-color: #08A9A8;text-align: center;"> HOW </td>
+									<td rowspan="{{ 1 }}" style="background-color: #08A9A8;text-align: center;"> <b>HOW</b> </td>
 									<td style="background-color: #A5FBFA;"> Conditions </td>
 									<td>
 										<button ng-click="AddSensorData()" type="button" class="btn-btn-info" >Add Sensor Info</button><br/>
@@ -612,7 +612,7 @@
 								
 								<!-- OTHER FIELDS START -->
 								<tr>
-									<td rowspan="{{ OtherFields }}" style="background-color: #F2F3F4;">Other</td>
+									<td rowspan="{{ OtherFields }}" style="background-color: #F2F3F4;"> <b>OTHER</b> </td>
 									<td> Event ID </td>
 									<td class="form-inline" style="display: block;margin: auto;">
 										<div class="custom-control custom-radio custom-control-inline">

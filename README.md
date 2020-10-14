@@ -20,6 +20,31 @@ node index.js
 localhost:3000
 ```
 
+### Build and run with Docker
+If you prefer not to install NodeJS on your local machine and want to run the Test Data Generator for EPCIS Events on Docker, you can use the provided Dockerfile or docker-compose.yml to run it.
+
+#### Option 1: docker-compose to run as docker container
+
++ Bring up service using docker-compose
+
+```sh
+docker-compose -f docker/docker-compose.yml up
+```
+
+#### Option 2: Dockerfile to build and run docker image
+
+* Create Image from Dockerfile:
+
+```sh
+docker build . -f ./docker/Dockerfile --tag gs1/epcis-test-data-generator
+```
+
+* Run Docker container
+
+```sh
+docker run --rm -ti -p 3000:3000 gs1/epcis-test-data-generator
+```
+
 ### Application workflow
 The web application consists of two different views. In the first view, the user can provide the required data and create the bulk EPCIS events directly. This view is beneficial for users when there are no specific requirements based on their organisation-specific supply chain. The following figure 1 provides the filled information in the view-1 of the application for the rail sector. It has been designed for the arriving events of the trains at a particular station. The generated events contain the unique GIAI and Event Time, indicating the different trains arrived at a station. However, other information such as Read Point, Business Location, Business Step, Disposition, etc. remain identical as they are captured at the same station and using the same device.
 

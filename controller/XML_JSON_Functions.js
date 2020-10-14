@@ -36,6 +36,7 @@ exports.schemaHeaders		=	function(InputData,callback)
 
 //Format the readpoint
 exports.ReadPointFormatter	=	function(input,File,callback){
+
 	var ReadPointCompany	=	input.readpointsgln1;
 	var ReadPointObject		=	input.readpointsgln2;
 	var ReadPrefixPoint		=	input.ReadPointCompanyPrefix;

@@ -1,3 +1,32 @@
+/*CSS for the Alertify Message Starts*/
+.alertify .ajs-footer .ajs-buttons.ajs-primary 
+{
+    text-align: right;
+    background-color: #002c6c;
+    color: #ffffff;
+}
+
+.alertify.ajs-movable:not(.ajs-maximized) .ajs-header {
+    cursor: move;
+    background-color: #002c6c;
+    color: #ffffff;
+}
+
+.alertify .ajs-footer .ajs-buttons .ajs-button.ajs-ok {
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+.alertify .ajs-footer .ajs-buttons .ajs-button.ajs-ok {
+    color: #ffffff !important;
+}
+
+.alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+    margin: 4px;
+    color: #ffffff;
+}
+/*CSS for the Alertify Message Ends*/
+
 .table-nonfluid {
    width: auto !important;
 }

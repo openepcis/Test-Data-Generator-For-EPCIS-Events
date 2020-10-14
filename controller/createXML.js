@@ -1,6 +1,7 @@
 var builder 			=	require('xmlbuilder');
 var moment 				= 	require('moment-timezone');
 var moment 				= 	require('moment');
+const gs1 				= 	require('gs1');
 var xml_json_functions	=	require('./XML_JSON_Functions');
 								
 exports.createXMLData	=	function(Query,Root,callback){
@@ -523,7 +524,7 @@ exports.createXMLData	=	function(Query,Root,callback){
 		
 		//Check for ReadPoint and based on that set the Readpoint 
 		if(input.readpointselector != '' && input.readpointselector != null && typeof input.readpointselector != undefined)
-		{			
+		{	
 			if(input.readpointselector == 'manually')
 			{
 				var readPoint = ObjectEvent.ele('readPoint')
@@ -531,6 +532,9 @@ exports.createXMLData	=	function(Query,Root,callback){
 			}
 			else if(input.readpointselector == 'sgln')
 			{
+				//Find the check digit in 13th place
+				input.readpointsgln1	=	input.readpointsgln1.substring(0,12) + gs1.checkdigit(input.readpointsgln1.substring(0,12));
+
 				var readPoint = ObjectEvent.ele('readPoint')
 				if(SyntaxType == 'urn')
 				{
@@ -555,6 +559,9 @@ exports.createXMLData	=	function(Query,Root,callback){
 			}
 			else if(input.businesslocationselector == 'sgln')
 			{
+				//Find the check digit in 13th place
+				input.businesspointsgln1	=	input.businesspointsgln1.substring(0,12) + gs1.checkdigit(input.businesspointsgln1.substring(0,12));
+
 				var businesslocation = ObjectEvent.ele('bizLocation')
 				
 				if(SyntaxType == 'urn')
@@ -713,6 +720,9 @@ exports.createXMLData	=	function(Query,Root,callback){
 				
 				if(input.sourcesType == 'owning_party' || input.sourcesType == 'processing_party' || input.sourcesType == 'location')
 				{
+					//Find the check digit in 13th place
+					input.SourceGLN			=	input.SourceGLN.substring(0,12) + gs1.checkdigit(input.SourceGLN.substring(0,12));
+
 					var Domain2				=	'https://id.gs1.org/';				
 					var SourceGLN			=	input.SourceGLN;
 					var SourceCompanyPrefix	=	input.SourcesCompanyPrefix;
@@ -801,6 +811,9 @@ exports.createXMLData	=	function(Query,Root,callback){
 				
 				if(input.destinationsType == 'owning_party' || input.destinationsType == 'processing_party' || input.destinationsType == 'location')
 				{
+					//Find the check digit in 13th place
+					input.DestinationGLN			=	input.DestinationGLN.substring(0,12) + gs1.checkdigit(input.DestinationGLN.substring(0,12));
+
 					var Domain2						=	'https://id.gs1.org/';	
 					var destinationGLN				=	input.DestinationGLN;
 					var destinationCompanyPrefix	=	input.DestinationCompanyPrefix;

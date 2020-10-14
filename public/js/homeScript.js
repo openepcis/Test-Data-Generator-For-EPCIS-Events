@@ -1173,6 +1173,7 @@ app.controller('AppController', function($scope,$http,$location,$anchorScroll,$c
 			$scope.SensorMetaDatas		=	response.SensorMetaDatas;
 			$scope.SensorReportDatas	=	response.SensorReportDatas;
 			$scope.TimeZones			=	response.TimeZones;
+			
 		}).error(function(error) {
 			console.log("Something went wrong in init")
 			console.log(error);
@@ -1180,31 +1181,38 @@ app.controller('AppController', function($scope,$http,$location,$anchorScroll,$c
 	};
 	
 	//If submit button is clicked then send data to Nodejs for XML and JSON creation
-	$scope.createEvents	= 	function(){
-		//params: 	{input:$scope.formdata,Extension:$scope.ExtensionList}	
-		//headers: 	{'Content-Type': 'application/x-www-form-urlencoded'},
-		//Based on the Selected Event Send the respective values
-		
+	$scope.createEvents	= 	function()
+	{
+		//Based on the Event type do the validations		
 		if($scope.formdata.eventtype1 == 'ObjectEvent')
 		{
+			//Check if Object event contains the EPCs or Quantities
 			if($scope.ObjectEventEpcsURI.length > 0 || $scope.ObjectEventQuantitiesURI.length > 0)
 			{
-				var data 	=	JSON.stringify({	
-												input			:	$scope.formdata,
-												EPCs			:	$scope.ObjectEventEpcsURI,
-												Quantities		:	$scope.ObjectEventQuantitiesURI,
-												ILMD			:	$scope.ObjectEventILMDList,
-												Extension		:	$scope.CommonExtensionsList,
-												ErrorCorrection	:	$scope.ErrorCorrectiveIds,
-												ErrorExtension	:	$scope.ErrorExtensionList,
-												BTT				:	$scope.BusinessTransactionList,
-												SensorForm		:	$rootScope.TotalSensorElementsArray,
-												XMLElement		:	"Single",
-												File			:	'ObjectEvent'
-											});
-			
-				//Call the function to create function
-				$scope.CreateEventFunctionHTTP(data);
+				//Check if the count of Events and elements in EPCs/Quantities Match
+				if(($scope.ObjectEventEpcsURI.length > 0 && $scope.formdata.eventcount != $scope.ObjectEventEpcsURI.length) || ($scope.ObjectEventQuantitiesURI.length > 0 && $scope.formdata.eventcount != $scope.ObjectEventQuantitiesURI.length))
+				{
+					alertify.alert("Test Data Generator", "The <b>Event count</b> and identifiers in <b>EPCs</b> or <b>Quantities</b> do not match")
+				}
+				else
+				{
+					var data 	=	JSON.stringify({	
+													input			:	$scope.formdata,
+													EPCs			:	$scope.ObjectEventEpcsURI,
+													Quantities		:	$scope.ObjectEventQuantitiesURI,
+													ILMD			:	$scope.ObjectEventILMDList,
+													Extension		:	$scope.CommonExtensionsList,
+													ErrorCorrection	:	$scope.ErrorCorrectiveIds,
+													ErrorExtension	:	$scope.ErrorExtensionList,
+													BTT				:	$scope.BusinessTransactionList,
+													SensorForm		:	$rootScope.TotalSensorElementsArray,
+													XMLElement		:	"Single",
+													File			:	'ObjectEvent'
+												});
+					
+					//Call the function to create function
+					$scope.CreateEventFunctionHTTP(data);
+				}
 			}
 			else
 			{
@@ -1213,93 +1221,122 @@ app.controller('AppController', function($scope,$http,$location,$anchorScroll,$c
 		}
 		else if($scope.formdata.eventtype1 == 'AggregationEvent')
 		{
-			var data 	=	JSON.stringify({
-											input			:	$scope.formdata,
-											Extension		:	$scope.CommonExtensionsList,
-											ParentID		:	$scope.AggregationEventParentURI,		
-											EPCs	 		:	$scope.AggregationEventChildEPCsURI,			
-											Quantities		:	$scope.AggregationEventChildQuantitiesURI,
-											ErrorCorrection	:	$scope.ErrorCorrectiveIds,
-											ErrorExtension	:	$scope.ErrorExtensionList,
-											BTT				:	$scope.BusinessTransactionList,
-											SensorForm		:	$rootScope.TotalSensorElementsArray,
-											XMLElement		:	"Single",
-											File			:	'AggregationEvent'
-										});
-										
-			//Call the function to create function
-			$scope.CreateEventFunctionHTTP(data);
-		}
-		else if($scope.formdata.eventtype1 == 'TransactionEvent')
-		{
-			//Check if required values are available
-			if($scope.BusinessTransactionList.length > 0)
+			//Check if the count of Events and elements in ParentID/Child EPCs/Child Quantities Match
+			if(($scope.AggregationEventParentURI.length > 0 && $scope.formdata.eventcount != $scope.AggregationEventParentURI.length) || ($scope.AggregationEventChildEPCsURI.length > 0 && $scope.formdata.eventcount != $scope.AggregationEventChildEPCsURI.length) || ($scope.AggregationEventChildQuantitiesURI.length > 0 && $scope.formdata.eventcount != $scope.AggregationEventChildQuantitiesURI.length))
 			{
-				var data	=	JSON.stringify({
+				alertify.alert("Test Data Generator", "The <b>Event count</b> and identifiers in <b>Parent IDs</b>/<b>Child EPCs</b>/<b>Child Quantities</b> do not match")
+			}
+			else
+			{
+				var data 	=	JSON.stringify({
 												input			:	$scope.formdata,
 												Extension		:	$scope.CommonExtensionsList,
-												ParentID		:	$scope.TransactionEventParentIDURI,
-												EPCs 			:	$scope.TransactionEventEPCsURI,
-												Quantities		:	$scope.TransactionEventQuantitiesURI,
+												ParentID		:	$scope.AggregationEventParentURI,		
+												EPCs	 		:	$scope.AggregationEventChildEPCsURI,			
+												Quantities		:	$scope.AggregationEventChildQuantitiesURI,
 												ErrorCorrection	:	$scope.ErrorCorrectiveIds,
 												ErrorExtension	:	$scope.ErrorExtensionList,
 												BTT				:	$scope.BusinessTransactionList,
 												SensorForm		:	$rootScope.TotalSensorElementsArray,
 												XMLElement		:	"Single",
-												File			:	'TransactionEvent'
+												File			:	'AggregationEvent'
 											});
 											
 				//Call the function to create function
 				$scope.CreateEventFunctionHTTP(data);
 			}
+		}
+		else if($scope.formdata.eventtype1 == 'TransactionEvent')
+		{
+			//Check if the count of Events and elements in Prent IDs/EPCs/Quantities Match
+			if(($scope.TransactionEventParentIDURI.length > 0 && $scope.formdata.eventcount != $scope.TransactionEventParentIDURI.length) || ($scope.TransactionEventEPCsURI.length > 0 && $scope.formdata.eventcount != $scope.TransactionEventEPCsURI.length) || ($scope.TransactionEventQuantitiesURI.length > 0 && $scope.formdata.eventcount != $scope.TransactionEventQuantitiesURI.length))
+			{
+				alertify.alert("Test Data Generator", "The <b>Event count</b> and identifiers in <b>Parent IDs</b>/<b>EPCs</b>/<b>Quantities</b> do not match")
+			}
 			else
 			{
-				alertify.alert("Test Data Generator", "Transaction Event requires: <b>Business Transactions</b>")
-			}
-			
-			
+				//Check if required values are available
+				if($scope.BusinessTransactionList.length > 0)
+				{
+					var data	=	JSON.stringify({
+													input			:	$scope.formdata,
+													Extension		:	$scope.CommonExtensionsList,
+													ParentID		:	$scope.TransactionEventParentIDURI,
+													EPCs 			:	$scope.TransactionEventEPCsURI,
+													Quantities		:	$scope.TransactionEventQuantitiesURI,
+													ErrorCorrection	:	$scope.ErrorCorrectiveIds,
+													ErrorExtension	:	$scope.ErrorExtensionList,
+													BTT				:	$scope.BusinessTransactionList,
+													SensorForm		:	$rootScope.TotalSensorElementsArray,
+													XMLElement		:	"Single",
+													File			:	'TransactionEvent'
+												});
+												
+					//Call the function to create function
+					$scope.CreateEventFunctionHTTP(data);
+				}
+				else
+				{
+					alertify.alert("Test Data Generator", "Transaction Event requires: <b>Business Transactions</b>")
+				}
+			}			
 		}
 		else if($scope.formdata.eventtype1 == 'TransformationEvent')
 		{
-			var data	=	JSON.stringify({
+			//Check if the count of Events and elements in Input EPCs/Quantities or Output EPCs/Quantities Match
+			if(($scope.TransformationEventInputEPCsURI.length > 0 && $scope.formdata.eventcount != $scope.TransformationEventInputEPCsURI.length) || ($scope.TransformationEventInputQuantityURI.length > 0 && $scope.formdata.eventcount != $scope.TransformationEventInputQuantityURI.length) || ($scope.TransformationEventOutputEPCSURI.length > 0 && $scope.formdata.eventcount != $scope.TransformationEventOutputEPCSURI.length) || ($scope.TransformationEventOutputQuantityURI.length > 0 && $scope.formdata.eventcount != $scope.TransformationEventOutputQuantityURI.length))
+			{
+				alertify.alert("Test Data Generator", "The <b>Event count</b> and identifiers in <b>Input EPCs</b>/<b>Input Quantities</b>/<b>Output EPCs</b>/<b>Output Quantities</b> do not match")
+			}
+			else
+			{
+				var data	=	JSON.stringify({
+													input			:	$scope.formdata,
+													EPCs			:	$scope.TransformationEventInputEPCsURI,
+													Quantities		:	$scope.TransformationEventInputQuantityURI,
+													OutputEPCs		:	$scope.TransformationEventOutputEPCSURI,
+													OutputQuantities:	$scope.TransformationEventOutputQuantityURI,
+													ILMD			:	$scope.TransformationEventILMDList,
+													Extension		:	$scope.CommonExtensionsList,
+													ErrorCorrection	:	$scope.ErrorCorrectiveIds,
+													ErrorExtension	:	$scope.ErrorExtensionList,
+													BTT				:	$scope.BusinessTransactionList,
+													SensorForm		:	$rootScope.TotalSensorElementsArray,
+													XMLElement		:	"Single",
+													File			:	'TransformationEvent'
+												});
+				
+				//Call the function to create function
+				$scope.CreateEventFunctionHTTP(data);
+			}
+		}
+		else if($scope.formdata.eventtype1 == 'AssociationEvent')
+		{
+			//Check if the count of Events and elements in ParentID/Child EPCs/Child Quantities Match
+			if(($scope.AssociationEventParentURI.length > 0 && $scope.formdata.eventcount != $scope.AssociationEventParentURI.length) || ($scope.AssociationEventChildEPCsURI.length > 0 && $scope.formdata.eventcount != $scope.AssociationEventChildEPCsURI.length) || ($scope.AssociationEventChildQuantitiesURI.length > 0 && $scope.formdata.eventcount != $scope.AssociationEventChildQuantitiesURI.length))
+			{
+				alertify.alert("Test Data Generator", "The <b>Event count</b> and identifiers in <b>Parent IDs</b>/<b>Child EPCs</b>/<b>Child Quantities</b> do not match")
+			}
+			else
+			{
+				var data 	=	JSON.stringify({
 												input			:	$scope.formdata,
-												EPCs			:	$scope.TransformationEventInputEPCsURI,
-												Quantities		:	$scope.TransformationEventInputQuantityURI,
-												OutputEPCs		:	$scope.TransformationEventOutputEPCSURI,
-												OutputQuantities:	$scope.TransformationEventOutputQuantityURI,
-												ILMD			:	$scope.TransformationEventILMDList,
 												Extension		:	$scope.CommonExtensionsList,
+												ParentID		:	$scope.AssociationEventParentURI,		
+												EPCs	 		:	$scope.AssociationEventChildEPCsURI,			
+												Quantities		:	$scope.AssociationEventChildQuantitiesURI,
 												ErrorCorrection	:	$scope.ErrorCorrectiveIds,
 												ErrorExtension	:	$scope.ErrorExtensionList,
 												BTT				:	$scope.BusinessTransactionList,
 												SensorForm		:	$rootScope.TotalSensorElementsArray,
 												XMLElement		:	"Single",
-												File			:	'TransformationEvent'
-											});
-			
-			//Call the function to create function
-			$scope.CreateEventFunctionHTTP(data);
+												File			:	'AssociationEvent'
+											});	
+				
+				//Call the function to create function
+				$scope.CreateEventFunctionHTTP(data);	
+			}
 		}
-		else if($scope.formdata.eventtype1 == 'AssociationEvent')
-		{
-			var data 	=	JSON.stringify({
-											input			:	$scope.formdata,
-											Extension		:	$scope.CommonExtensionsList,
-											ParentID		:	$scope.AssociationEventParentURI,		
-											EPCs	 		:	$scope.AssociationEventChildEPCsURI,			
-											Quantities		:	$scope.AssociationEventChildQuantitiesURI,
-											ErrorCorrection	:	$scope.ErrorCorrectiveIds,
-											ErrorExtension	:	$scope.ErrorExtensionList,
-											BTT				:	$scope.BusinessTransactionList,
-											SensorForm		:	$rootScope.TotalSensorElementsArray,
-											XMLElement		:	"Single",
-											File			:	'AssociationEvent'
-										});	
-			
-			//Call the function to create function
-			$scope.CreateEventFunctionHTTP(data);			
-		}
-		
 	}
 	
 	//Function to make final call for creating the events

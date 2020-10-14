@@ -1,5 +1,6 @@
 var moment 				= 	require('moment-timezone');
 var moment 				= 	require('moment');
+const gs1 				= 	require('gs1');
 var xml_json_functions	=	require('./XML_JSON_Functions');
 
 exports.createJSONData	=	function(Query,JSONHeader,callback){
@@ -499,6 +500,8 @@ exports.createJSONData	=	function(Query,JSONHeader,callback){
 		//Check and create the READPOINT
 		if(input.readpointselector != '' && input.readpointselector != null && typeof input.readpointselector != undefined)
 		{
+			input.readpointsgln1	=	input.readpointsgln1.substring(0,12) + gs1.checkdigit(input.readpointsgln1.substring(0,12));
+
 			ObjectEvent["readPoint"]	=	{};
 			
 			if(input.readpointselector == 'manually')
@@ -672,14 +675,18 @@ exports.createJSONData	=	function(Query,JSONHeader,callback){
 		if(input.sourcesType != '' && input.sourcesType != null && input.sourcesType != undefined)
 		{				
 			ObjectEvent['sourceList']		=	[];
-			var SourceListObj				=	new Object();
-			var Domain2						=	'https://id.gs1.org/';				
-			var SourceGLN					=	input.SourceGLN;
-			var SourceCompanyPrefix			=	input.SourcesCompanyPrefix;
-			var FormattedSource;
 			
 			if(input.sourcesType == 'owning_party' || input.sourcesType == 'processing_party' || input.sourcesType == 'location')
-			{			
+			{
+				//Find the check digit in 13th place
+				input.SourceGLN					=	input.SourceGLN.substring(0,12) + gs1.checkdigit(input.SourceGLN.substring(0,12));
+
+				var SourceListObj				=	new Object();
+				var Domain2						=	'https://id.gs1.org/';				
+				var SourceGLN					=	input.SourceGLN;
+				var SourceCompanyPrefix			=	input.SourcesCompanyPrefix;
+				var FormattedSource;
+			
 				xml_json_functions.SourceDestinationFormatter(SourceGLN,SourceCompanyPrefix,function(data)
 				{	
 					FormattedSource	=	data;
@@ -744,14 +751,18 @@ exports.createJSONData	=	function(Query,JSONHeader,callback){
 		//Check for the Destination and Destination type
 		if(input.destinationsType != '' && input.destinationsType != null && input.destinationsType != undefined)
 		{
-			ObjectEvent['destinationList']		=	[];
-			var destinationListObj				=	new Object();
-			var destinationGLN					=	input.DestinationGLN;
-			var destinationCompanyPrefix		=	input.DestinationCompanyPrefix;
-			var FormattedDestination;
-
 			if(input.destinationsType == 'owning_party' || input.destinationsType == 'processing_party' || input.destinationsType == 'location')
-			{				
+			{
+				//Find the check digit in 13th place
+				input.DestinationGLN				=	input.DestinationGLN.substring(0,12) + gs1.checkdigit(input.DestinationGLN.substring(0,12));
+
+				ObjectEvent['destinationList']		=	[];
+				var Domain2							=	'https://id.gs1.org/';	
+				var destinationListObj				=	new Object();
+				var destinationGLN					=	input.DestinationGLN;
+				var destinationCompanyPrefix		=	input.DestinationCompanyPrefix;
+				var FormattedDestination;
+			
 				xml_json_functions.SourceDestinationFormatter(destinationGLN,destinationCompanyPrefix,function(data)
 				{
 					FormattedDestination	=	data;
@@ -762,24 +773,48 @@ exports.createJSONData	=	function(Query,JSONHeader,callback){
 					//If PGLN then directly append
 					if(input.DestinationLNType == 'pgln')
 					{
-						destinationListObj['type']			=	'urn:epcglobal:cbv:sdt:'+input.destinationsType;
-						destinationListObj['destination']	=	'urn:epc:id:pgln:' + FormattedDestination								
+						if(SyntaxType == 'urn')
+						{
+							destinationListObj['type']			=	'urn:epcglobal:cbv:sdt:'+input.destinationsType;
+							destinationListObj['destination']	=	'urn:epc:id:pgln:' + FormattedDestination	
+						}
+						else if(SyntaxType == 'webURI')
+						{
+							destinationListObj['type']			=	Domain+'voc/SDT-'+input.destinationsType;
+							destinationListObj['source']		=	Domain2+'414/'+input.DestinationGLN;
+						}
+													
 					}
 					else if(input.DestinationLNType == 'sgln')
 					{
-						FormattedDestination				=	FormattedDestination + '.' + input.DestinationGLNExtension;
-						destinationListObj['type']			=	'urn:epcglobal:cbv:sdt:'+input.destinationsType;
-						destinationListObj['destination']	=	'urn:epc:id:pgln:' + FormattedDestination							
+						if(SyntaxType == 'urn')
+						{
+							FormattedDestination				=	FormattedDestination + '.' + input.DestinationGLNExtension;
+							destinationListObj['type']			=	'urn:epcglobal:cbv:sdt:'+input.destinationsType;
+							destinationListObj['destination']	=	'urn:epc:id:pgln:' + FormattedDestination	
+						}
+						else if(SyntaxType == 'webURI')
+						{
+							destinationListObj['type']			=	Domain+'voc/SDT-'+input.destinationsType;
+							destinationListObj['source']		=	Domain2+'414/'+input.DestinationGLN+'/254/'+input.DestinationGLNExtension;
+						}												
 					}	
 				}
 				
 				if(input.destinationsType == 'location')
 				{
-					FormattedDestination					=	FormattedDestination + '.' + input.DestinationGLNExtension;
-					destinationListObj['type']				=	'urn:epcglobal:cbv:sdt:'+input.destinationsType;
-					destinationListObj['destination']		=	'urn:epc:id:pgln:' + FormattedDestination						
-				}
-					
+					if(SyntaxType == 'urn')
+					{
+						FormattedDestination					=	FormattedDestination + '.' + input.DestinationGLNExtension;
+						destinationListObj['type']				=	'urn:epcglobal:cbv:sdt:'+input.destinationsType;
+						destinationListObj['destination']		=	'urn:epc:id:pgln:' + FormattedDestination	
+					}
+					else if(SyntaxType == 'webURI')
+					{
+						destinationListObj['type']				=	Domain+'voc/SDT-'+input.destinationsType;
+						destinationListObj['source']			=	Domain2+'414/'+input.DestinationGLN+'/254/'+input.DestinationGLNExtension;
+					}									
+				}					
 			}
 			else if(input.destinationsType == 'other')
 			{
